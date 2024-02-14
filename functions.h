@@ -29,7 +29,22 @@ void showAcknowledge(int nb) {
  * 
  */
 
+/*
+ * setup the version number
+ */
 
+
+void setVersion() {
+  const String versionString = VERSION;
+  char versionArray[versionString.length() + 1];
+  versionString.toCharArray(versionArray, versionString.length() + 1);
+  version = strtok(versionArray, "."); // Split version on .
+  versionBuffer[0] = atoi(version);  // Major first
+  version = strtok(NULL, ".");
+  versionBuffer[1] = atoi(version);  // Minor next
+  version = strtok(NULL, ".");
+  versionBuffer[2] = atoi(version);  // Patch last
+}
 
 #ifdef ENABLE_SERIAL
 

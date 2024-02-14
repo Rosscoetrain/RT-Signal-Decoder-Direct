@@ -169,4 +169,7 @@ String readString;
 #endif
 
 Lights lLights;
+
   
+char* version;
+uint8_t versionBuffer[3];

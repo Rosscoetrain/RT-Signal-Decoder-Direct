@@ -17,13 +17,16 @@
 //#define DEBUG_MSG
 
 // to show lights debug messages
-#define DEBUG_MSG_LIGHTS
+//#define DEBUG_MSG_LIGHTS
 
 // Uncomment to print all DCC Packets
 //#define  NOTIFY_DCC_MSG
 
 // Uncomment to print all DCC turnout messages
-#define NOTIFY_TURNOUT_MSG
+//#define NOTIFY_TURNOUT_MSG
+
+// Uncomment to print all DCC signal messages
+//#define NOTIFY_SIGNAL_MSG
 
 // Un-comment the following line to activate testing routines.
 //#define TESTING

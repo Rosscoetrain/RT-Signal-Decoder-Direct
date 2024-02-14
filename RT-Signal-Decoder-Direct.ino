@@ -6,11 +6,13 @@
  */
 
 #include <NmraDcc.h>
+#include "version.h"
 #include "defines.h"
 
 #include "Lights.h"
 
 #include "variables.h"
+
 
 #include "functions.h"
 
@@ -23,7 +25,9 @@
 void setup()
 {
   pinMode(2, INPUT);
-  
+
+  setVersion();
+
 #ifdef ENABLE_SERIAL
   Serial.begin(115200);
   uint8_t maxWaitLoops = 255;
@@ -50,11 +54,6 @@ void setup()
 
   // Call the main DCC Init function to enable the DCC Receiver
   Dcc.init( MAN_ID_DIY, DCC_DECODER_VERSION_NUM, CV29_ACCESSORY_DECODER | CV29_OUTPUT_ADDRESS_MODE, 0 );
-
-#ifdef ENABLE_SERIAL
-//  Serial.println("NMRA DCC Example 1");
-  Serial.print("Rosscoe Train Coloured Light Signal Decoder Version: ");Serial.println(DCC_DECODER_VERSION_NUM,DEC);
-#endif
 
 #ifdef FORCE_RESET_FACTORY_DEFAULT_CV
 #ifdef ENABLE_SERIAL
@@ -87,6 +86,19 @@ void setup()
   digitalWrite(LED_BUILTIN, LOW);
 
 #ifdef ENABLE_SERIAL
+//  Serial.println("NMRA DCC Example 1");
+  Serial.print("Rosscoe Train Coloured Light Signal Decoder ");
+  Serial.print(F("Version: "));
+  Serial.print(versionBuffer[0]);
+  Serial.print(F("."));
+  Serial.print(versionBuffer[1]);
+  Serial.print(F("."));
+  Serial.println(versionBuffer[2]);
+
+  Serial.print("base DCC address: ");
+  Serial.println(BaseDecoderAddress, DEC);
+
+
   Serial.println("Init Done");
 #endif
 }
