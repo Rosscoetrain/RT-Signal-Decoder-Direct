@@ -14,128 +14,6 @@
 
 #include "functions.h"
 
-#ifdef FORCE_RESET_FACTORY_DEFAULT_CV
-void notifyCVResetFactoryDefault()
-{
-  // Make FactoryDefaultCVIndex non-zero and equal to num CV's to be reset 
-  // to flag to the loop() function that a reset to Factory Defaults needs to be done
-  FactoryDefaultCVIndex = sizeof(FactoryDefaultCVs)/sizeof(CVPair);
-};
-#endif
-
-#ifdef ENABLE_DCC_ACK
-// This function is called by the NmraDcc library when a DCC ACK needs to be sent
-// Calling this function should cause an increased 60ma current drain on the power supply for 6ms to ACK a CV Read 
-void notifyCVAck(void)
-{
-  Serial.println("notifyCVAck") ;
-  
-  digitalWrite( ENABLE_DCC_ACK, HIGH );
-  delay( 10 );  
-  digitalWrite( ENABLE_DCC_ACK, LOW );
-}
-#endif
-
-
-#ifdef NOTIFY_DCC_MSG
-void notifyDccMsg( DCC_MSG * Msg)
-{
-  Serial.print("notifyDccMsg: ") ;
-  for(uint8_t i = 0; i < Msg->Size; i++)
-  {
-    Serial.print(Msg->Data[i], HEX);
-    Serial.write(' ');
-  }
-  Serial.println();
-}
-#endif
-
-/*
-// This function is called whenever a normal DCC Turnout Packet is received and we're in Board Addressing Mode
-void notifyDccAccTurnoutBoard( uint16_t BoardAddr, uint8_t OutputPair, uint8_t Direction, uint8_t OutputPower )
-{
-  Serial.print("notifyDccAccTurnoutBoard: ") ;
-  Serial.print(BoardAddr,DEC) ;
-  Serial.print(',');
-  Serial.print(OutputPair,DEC) ;
-  Serial.print(',');
-  Serial.print(Direction,DEC) ;
-  Serial.print(',');
-  Serial.println(OutputPower, HEX) ;
-}
-*/
-
-// This function is called whenever a normal DCC Turnout Packet is received and we're in Output Addressing Mode
-void notifyDccAccTurnoutOutput( uint16_t Addr, uint8_t Direction, uint8_t OutputPower )
-{
-
-#ifdef TESTING_DCC
-  showAcknowledge(2);
-#endif
-
-#ifdef  NOTIFY_TURNOUT_MSG
-  Serial.print("notifyDccAccTurnoutOutput: Turnout: ") ;
-  Serial.print(Addr,DEC) ;
-  Serial.print(" Direction: ");
-  Serial.print(Direction ? "Closed" : "Thrown") ;
-  Serial.print(" Output: ");
-  Serial.print(OutputPower ? "On" : "Off") ;
-#endif
-
-#ifdef LEARNING
-// check to see if in learning mode and update address
-  if (learningMode == HIGH) {
-
-//    int H = (Addr - 1) / 64;
-//    int L = Addr - (H * 64);
-    byte L = (Addr + 3) / 4;
-    byte H = (Addr + 3) / 1024;
-
-#ifdef DEBUG_MSG
-    Serial.println("");
-    Serial.print(F("Value = ")); Serial.println(Addr,DEC);
-    Serial.print(F(" H = ")); Serial.println(H,DEC);
-    Serial.print(F(" L = ")); Serial.println(L,DEC);
-#endif
-                  
-    Dcc.setCV(CV_ACCESSORY_DECODER_ADDRESS_MSB, H);
-    Dcc.setCV(CV_ACCESSORY_DECODER_ADDRESS_LSB, L);
-
-   }
-  else
-#endif
-   {
-
-    if(( Addr >= BaseDecoderAddress ) && ( Addr < (BaseDecoderAddress + MAXACCESSORIES )) && OutputPower )
-     {
-
-      thisCommand = ( ( ( Addr - BaseDecoderAddress ) * 10 ) + 1 ) + Direction;
-
-      lLights.addCommand(thisCommand);
-
-#ifdef  DEBUG_MSG
-      Serial.print("ndato thisCommand: ");
-      Serial.println(thisCommand,DEC);
-#endif
-     }
-
-   }
-
-#ifdef  NOTIFY_TURNOUT_MSG
-  Serial.println();
-#endif
-
-}
-
-
-// This function is called whenever a DCC Signal Aspect Packet is received
-void notifyDccSigOutputState( uint16_t Addr, uint8_t State)
-{
-  Serial.print("notifyDccSigOutputState: ") ;
-  Serial.print(Addr,DEC) ;
-  Serial.print(',');
-  Serial.println(State, HEX) ;
-}
 
 
 /**********************************************************************
@@ -190,6 +68,7 @@ void setup()
 #ifdef DEBUG_MSG
   Serial.print("DCC Base Address: "); Serial.println(BaseDecoderAddress, DEC);
 #endif
+
   pinMode(LED_BUILTIN, OUTPUT);
   digitalWrite(LED_BUILTIN, HIGH);
   delay(200);
