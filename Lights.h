@@ -21,30 +21,26 @@ enum TT_State
 
 typedef struct {
 //  int               address;          // User Configurable. DCC address to respond to
-  byte              mode;             // User Configurable. Mode: 1=Continuous, 2=Oneshot, 3=Flasher, 4=Flasher fader
-  byte              outputPin;        // User Configurable. Arduino pin where accessory is connected to
-//#ifdef ACTION_FLASHALTERNATE
+  byte              mode1;            // User Configurable. mode for outputPin1
+  byte              mode2;            // User configurable, mode for outputPin2
+  byte              mode3;            // User configurable, mode for outputPin3
+  byte              outputPin1;       // User Configurable. Arduino pin where accessory is connected to
   byte              outputPin2;       // User Configurable. 2nd pin for AlternatingFlasher (e.g. railway crossing)
-//#endif
-/*
+  byte              outputPin3;       // User Configurable. 3rd pin for e.g. amber aspect
   byte              ontime;           // User Configurable. Oneshot or Flasher on time in ms X ontimeX
   byte              ontimeX;          // User Configurable. on time multiplier
   byte              offtime;          // User Configurable. Flasher off time in ms X offtimeX
   byte              offtimeX;         // User Configurable. off time multiplier
-*/
   byte              dccstate;         // Internal use. DCC state of accessory: 1=on, 0=off
   byte              onoff;            // Internal use. Output state of accessory: 1=on, 0=off
-/*
-#ifndef ARDUINO_AVR_DIGISPARK
   byte              fadein;           // fade in time for fader
   byte              fadeout;          // fade out time for fader
   int               fade;             // fade level
-//  byte              onoff2;           // Internal use. Output state of AlternatingFlasher 1=on, 0=off NOT USED
+  byte              onoff2;           // Internal use. Output state of AlternatingFlasher 1=on, 0=off NOT USED
   byte              finished;         // Internal use. Memory that says the Oneshot is finished
-#endif
   unsigned long     onMilli;          // Internal use.
   unsigned long     offMilli;         // Internal use.
-*/
+
 } DCCAccessoryAddress;
 
 class Lights

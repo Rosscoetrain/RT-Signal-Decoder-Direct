@@ -44,54 +44,6 @@
 // Set the Decoder Version - Used by JMRI to Identify the decoder
 #define DCC_DECODER_VERSION_NUM 11
 
-
-// digispark attiny85 usb board.  Actions are limited by the available flash memory.
-
-// Following is able to be loaded together.  All actions (except flash facer) can be loaded singly.
-//  ACTION_ONOFF + ACTION_ONESHOT
-//  ACTION_ONOFF + ACTION_FLASH
-//  ACTION_ONOFF + ACTION_STROBEDOUBLE
-
-#if defined(ARDUINO_AVR_DIGISPARK) || defined(ARDUINO_AVR_DIGISPARKPRO)
-
-#define ACTION_ONOFF                        // on off by command
-//#define ACTION_ONESHOT                      // one shot flash
-//#define ACTION_FLASH                        // flash on single pin
-//#define ACTION_FLASHFADER                     // flash with fade up/down
-//#define ACTION_FLASHALTERNATE               // flash on alternate pins needs two output pins can only have TT_MOVER_MAX_TRACKS = 1
-//#define ACTION_STROBEDOUBLE                   // double strobe flash on single pin
-//#define ACTION_RANDOMBRIGHT                 // random varying brightness
-//#define ACTION_8                            // action 
-//#define ACTION_9                            // action 
-//#define ACTION_10                           // action 
-//#define ACTION_11                           // action 
-//#define ACTION_12                           // action 
-//#define ACTION_13                           // action 
-//#define ACTION_14                           // action 
-//#define ACTION_15                           // action 
-
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Fill in the number of accessories you want to control  on attiny85 this is 1 - 4
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-#if defined(ACTION_ONOFF) && (defined(ACTION_ONESHOT) || defined(ACTION_FLASH) || defined(ACTION_STROBEDOUBLE))
-#define MAXACCESSORIES 2
-#else
-#define MAXACCESSORIES 1
-#endif
-
-#ifdef ARDUINO_AVR_DIGISPARKPRO
-#define MAXACCESSORIES 13
-#endif
-
-// this determines the number of queued commands.
-#define TT_MOVER_MAX_TRACKS 1
-
-#define LED_BUILTIN 1
-
-#else
-
 #define ACTION_ONOFF                        // on off by command
 //#define ACTION_ONESHOT                      // one shot flash
 //#define ACTION_FLASH                        // flash on single pin
@@ -113,20 +65,19 @@
 // Fill in the number of accessories you want to control depends on board in use
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#define MAXACCESSORIES 16
-
+#define MAXACCESSORIES 8
 
 // this determines the number of queued commands.
 #define TT_MOVER_MAX_TRACKS 16
 
 #define LED_BUILTIN 13
 
-#endif
-
-
 #define TT_MOVER_SLOT_EMPTY 255
 
 //#define STROBE_DELAY 100
 
+
+// the number of CVs requried for each address
+#define NUMBER_OF_CVS 12
   
   

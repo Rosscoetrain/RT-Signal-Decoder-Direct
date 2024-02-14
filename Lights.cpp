@@ -15,47 +15,42 @@ void Lights::init(NmraDcc Dcc)
   this->state = TT_IDLE;
   memset(this->commandQueue, TT_MOVER_SLOT_EMPTY, TT_MOVER_MAX_TRACKS + 1);
 
-#ifndef ARDUINO_AVR_DIGISPARK
   for (byte i=0; i < MAXACCESSORIES; i++)
    {
-#else
-  byte i = 0;
-#endif
-     accessory[i].mode = Dcc.getCV(33 + i * 10);          // mode
-/*
-     accessory[i].ontime = Dcc.getCV(34 + i * 10);        // ontime
-     accessory[i].ontimeX = Dcc.getCV(35 + i * 10);       // ontime multiplier
-     accessory[i].offtime = Dcc.getCV(36 + i * 10);       // offtime
-     accessory[i].offtimeX = Dcc.getCV(37 + i * 10);      // offtime multiplier
-*/
-     accessory[i].outputPin = Dcc.getCV(38 + i * 10);     // output pin 1 GREEN for signals
+     accessory[i].mode1 = Dcc.getCV(33 + i * NUMBER_OF_CVS);         // outputPin1 mode
+     accessory[i].mode2 = Dcc.getCV(34 + i * NUMBER_OF_CVS);         // outputPin2 mode
+     accessory[i].mode2 = Dcc.getCV(35 + i * NUMBER_OF_CVS);         // outputPin3 mode
+
+     accessory[i].ontime = Dcc.getCV(36 + i * NUMBER_OF_CVS);        // ontime
+     accessory[i].ontimeX = Dcc.getCV(37 + i * NUMBER_OF_CVS);       // ontime multiplier
+     accessory[i].offtime = Dcc.getCV(38 + i * NUMBER_OF_CVS);       // offtime
+     accessory[i].offtimeX = Dcc.getCV(39 + i * NUMBER_OF_CVS);      // offtime multiplier
+
+     accessory[i].outputPin1 = Dcc.getCV(40 + i * NUMBER_OF_CVS);    // output pin 1 for signals
+     accessory[i].outputPin2 = Dcc.getCV(41 + i * NUMBER_OF_CVS);    // output pin 2 for signals
+     accessory[i].outputPin3 = Dcc.getCV(42 + i * NUMBER_OF_CVS);    // output pin 3 for signals
+
+     accessory[i].fadein = Dcc.getCV(43 + i * NUMBER_OF_CVS);        // fade in time for fader
+     accessory[i].fadeout = Dcc.getCV(44 + i * NUMBER_OF_CVS);       // fade out time for fader
+
      accessory[i].dccstate = 0;                           // Internal use. DCC state of accessory: 1=on, 0=off
-/*
      accessory[i].onoff = 0;                              // Internal use. Output state of accessory: 1=on, 0=off
      accessory[i].onMilli = 0;                            // Internal use.
      accessory[i].offMilli = 0;                           // Internal use.
-*/
 
-//#ifdef ACTION_FLASHALTERNATE
-     accessory[i].outputPin2 = Dcc.getCV(39 + i * 10);    // output pin 2 RED for signals
-//#endif
+     accessory[i].fade = 0;                               // Internal use. Output state of accessory: 1=on, 0=off
 
-/*
-#ifndef ARDUINO_AVR_DIGISPARK
-     accessory[i].fadein = Dcc.getCV(40 + i * 10);             // fade in time for fader
-     accessory[i].fadeout = Dcc.getCV(41 + i * 10);            // fade out time for fader
-     accessory[i].fade = 0;                              // Internal use. Output state of accessory: 1=on, 0=off
-#endif
-*/
-
-     pinMode(accessory[i].outputPin, OUTPUT);
-     digitalWrite(accessory[i].outputPin, LOW);
+     pinMode(accessory[i].outputPin1, OUTPUT);
+     digitalWrite(accessory[i].outputPin1, LOW);
      pinMode(accessory[i].outputPin2, OUTPUT);
      digitalWrite(accessory[i].outputPin2, HIGH);
 
-#ifndef ARDUINO_AVR_DIGISPARK
+     if(accessory[i].outputPin3 != 0)
+      {
+       pinMode(accessory[i].outputPin3, OUTPUT);
+       digitalWrite(accessory[i].outputPin3, HIGH);
+      }
    }
-#endif
 }
 
 
@@ -101,7 +96,6 @@ void Lights::process(void)
  */
 
 
-
     if ( this->state == TT_MOVE )
      {
 
@@ -112,20 +106,23 @@ void Lights::process(void)
 //      Serial.print("thisCommand = ");Serial.println(this->thisCommand);
       Serial.print("Process 2: target = ");Serial.println(this->target);
       Serial.print("Process 2: direction = ");Serial.println(this->direction);
-      Serial.print("Process 2: outputPin = ");Serial.println(accessory[this->target].outputPin);
+      Serial.print("Process 2: outputPin1 = ");Serial.println(accessory[this->target].outputPin1);
       Serial.print("Process 2: outputPin2 = ");Serial.println(accessory[this->target].outputPin2);
       Serial.println();
 #endif
 
       if ( !accessory[this->target].dccstate && this->direction)         // if turned off and direction turn on
        {
-        switch (accessory[this->target].mode)
+        switch (accessory[this->target].mode1)
          {
 #ifdef ACTION_ONOFF
           case 0:                                                        // on/off
 
-            digitalWrite(accessory[this->target].outputPin, HIGH);
+            digitalWrite(accessory[this->target].outputPin1, HIGH);
             digitalWrite(accessory[this->target].outputPin2, LOW);
+
+// outputPin3 details here
+
             accessory[this->target].dccstate = 1;
             accessory[this->target].onoff = 1;
 
@@ -137,7 +134,7 @@ void Lights::process(void)
 #ifdef ACTION_ONESHOT
           case 1:                                                        // oneshot
             accessory[this->target].offMilli = millis() + (accessory[this->target].ontime * accessory[this->target].ontimeX);
-            digitalWrite(accessory[this->target].outputPin, HIGH);
+            digitalWrite(accessory[this->target].outputPin1, HIGH);
             accessory[this->target].dccstate = 1;
             accessory[this->target].onoff = 1;
             this->state = TT_STOP;
@@ -148,7 +145,7 @@ void Lights::process(void)
             if (!accessory[this->target].dccstate)
              {
               accessory[this->target].offMilli = millis() + (accessory[this->target].ontime * accessory[this->target].ontimeX);
-              digitalWrite(accessory[this->target].outputPin, HIGH);
+              digitalWrite(accessory[this->target].outputPin1, HIGH);
               accessory[this->target].dccstate = 1;
               accessory[this->target].onoff = 1;
               this->state = TT_STOP;
@@ -168,7 +165,7 @@ void Lights::process(void)
               accessory[this->target].onoff = 1;
 
               accessory[this->target].fade = 0;
-              analogWrite(accessory[this->target].outputPin, accessory[this->target].fade);
+              analogWrite(accessory[this->target].outputPin1, accessory[this->target].fade);
 
               this->state = TT_STOP;
              }
@@ -182,7 +179,7 @@ void Lights::process(void)
             if (!accessory[this->target].dccstate)                     // flash alternate turn on
              {
               accessory[this->target].offMilli = millis() + (accessory[this->target].ontime * accessory[this->target].ontimeX);
-              digitalWrite(accessory[this->target].outputPin, HIGH);
+              digitalWrite(accessory[this->target].outputPin1, HIGH);
               digitalWrite(accessory[this->target].outputPin2, LOW);
               accessory[this->target].dccstate = 1;
               accessory[this->target].onoff = 1;
@@ -197,9 +194,9 @@ void Lights::process(void)
             if (!accessory[this->target].dccstate)
              {
               accessory[this->target].offMilli = millis() + (accessory[this->target].ontime * accessory[this->target].ontimeX);
-              this->strobe(accessory[this->target].outputPin);
+              this->strobe(accessory[this->target].outputPin1);
               delay(100);
-              this->strobe(accessory[this->target].outputPin);
+              this->strobe(accessory[this->target].outputPin1);
 
               accessory[this->target].dccstate = 1;
               accessory[this->target].onoff = 1;
@@ -217,7 +214,7 @@ void Lights::process(void)
               accessory[this->target].onoff = 1;
 
               accessory[this->target].fade = random(255);
-              analogWrite(accessory[this->target].outputPin, accessory[this->target].fade);
+              analogWrite(accessory[this->target].outputPin1, accessory[this->target].fade);
 
               this->state = TT_STOP;
              }
@@ -227,7 +224,7 @@ void Lights::process(void)
           case 7:
             if (!accessory[this->target].dccstate)
              {
-              digitalWrite(accessory[this->target].outputPin, HIGH);
+              digitalWrite(accessory[this->target].outputPin1, HIGH);
               accessory[this->target].dccstate = 1;
               accessory[this->target].onoff = 1;
               this->state = TT_STOP;
@@ -238,7 +235,7 @@ void Lights::process(void)
           case 8:
             if (!accessory[this->target].dccstate)
              {
-              digitalWrite(accessory[this->target].outputPin, HIGH);
+              digitalWrite(accessory[this->target].outputPin1, HIGH);
               accessory[this->target].dccstate = 1;
               accessory[this->target].onoff = 1;
               this->state = TT_STOP;
@@ -249,7 +246,7 @@ void Lights::process(void)
           case 9:
             if (!accessory[this->target].dccstate)
              {
-              digitalWrite(accessory[this->target].outputPin, HIGH);
+              digitalWrite(accessory[this->target].outputPin1, HIGH);
               accessory[this->target].dccstate = 1;
               accessory[this->target].onoff = 1;
               this->state = TT_STOP;
@@ -260,7 +257,7 @@ void Lights::process(void)
           case 10:
             if (!accessory[this->target].dccstate)
              {
-              digitalWrite(accessory[this->target].outputPin, HIGH);
+              digitalWrite(accessory[this->target].outputPin1, HIGH);
               accessory[this->target].dccstate = 1;
               accessory[this->target].onoff = 1;
               this->state = TT_STOP;
@@ -271,7 +268,7 @@ void Lights::process(void)
           case 11:
             if (!accessory[this->target].dccstate)
              {
-              digitalWrite(accessory[this->target].outputPin, HIGH);
+              digitalWrite(accessory[this->target].outputPin1, HIGH);
               accessory[this->target].dccstate = 1;
               accessory[this->target].onoff = 1;
               this->state = TT_STOP;
@@ -282,7 +279,7 @@ void Lights::process(void)
           case 12:
             if (!accessory[this->target].dccstate)
              {
-              digitalWrite(accessory[this->target].outputPin, HIGH);
+              digitalWrite(accessory[this->target].outputPin1, HIGH);
               accessory[this->target].dccstate = 1;
               accessory[this->target].onoff = 1;
               this->state = TT_STOP;
@@ -293,7 +290,7 @@ void Lights::process(void)
           case 13:
             if (!accessory[this->target].dccstate)
              {
-              digitalWrite(accessory[this->target].outputPin, HIGH);
+              digitalWrite(accessory[this->target].outputPin1, HIGH);
               accessory[this->target].dccstate = 1;
               accessory[this->target].onoff = 1;
               this->state = TT_STOP;
@@ -304,7 +301,7 @@ void Lights::process(void)
           case 14:
             if (!accessory[this->target].dccstate)
              {
-              digitalWrite(accessory[this->target].outputPin, HIGH);
+              digitalWrite(accessory[this->target].outputPin1, HIGH);
               accessory[this->target].dccstate = 1;
               accessory[this->target].onoff = 1;
               this->state = TT_STOP;
@@ -315,7 +312,7 @@ void Lights::process(void)
           case 15:
             if (!accessory[this->target].dccstate)
              {
-              digitalWrite(accessory[this->target].outputPin, HIGH);
+              digitalWrite(accessory[this->target].outputPin1, HIGH);
               accessory[this->target].dccstate = 1;
               accessory[this->target].onoff = 1;
               this->state = TT_STOP;
@@ -338,12 +335,15 @@ void Lights::process(void)
 #endif
 
 
-          switch (accessory[this->target].mode)
+          switch (accessory[this->target].mode1)
            {
 #ifdef ACTION_ONOFF
             case 0:
-              digitalWrite(accessory[this->target].outputPin, LOW);
+              digitalWrite(accessory[this->target].outputPin1, LOW);
               digitalWrite(accessory[this->target].outputPin2, HIGH);
+
+// outputPin3 here
+
               accessory[this->target].dccstate = 0;
               accessory[this->target].onoff = 0;
               this->state = TT_STOP;
@@ -352,7 +352,7 @@ void Lights::process(void)
 /*
 #ifdef ACTION_ONESHOT
             case 1:
-              digitalWrite(accessory[this->target].outputPin, LOW);
+              digitalWrite(accessory[this->target].outputPin1, LOW);
               accessory[this->target].dccstate = 0;
               accessory[this->target].onoff = 0;
               this->state = TT_STOP;
@@ -360,7 +360,7 @@ void Lights::process(void)
 #endif
 #ifdef ACTION_FLASH
             case 2:
-              digitalWrite(accessory[this->target].outputPin, LOW);
+              digitalWrite(accessory[this->target].outputPin1, LOW);
               accessory[this->target].dccstate = 0;
               accessory[this->target].onoff = 0;
               this->state = TT_STOP;
@@ -374,7 +374,7 @@ void Lights::process(void)
               accessory[this->target].onoff = 0;
 
               accessory[this->target].fade = 0;
-              analogWrite(accessory[this->target].outputPin, accessory[this->target].fade);
+              analogWrite(accessory[this->target].outputPin1, accessory[this->target].fade);
 
               this->state = TT_STOP;
             break;
@@ -383,7 +383,7 @@ void Lights::process(void)
 
 #ifdef ACTION_FLASHALTERNATE
             case 4:
-              digitalWrite(accessory[this->target].outputPin, LOW);
+              digitalWrite(accessory[this->target].outputPin1, LOW);
               digitalWrite(accessory[this->target].outputPin2, LOW);
               accessory[this->target].dccstate = 0;
               accessory[this->target].onoff = 0;
@@ -394,7 +394,7 @@ void Lights::process(void)
 
 #ifdef ACTION_STROBEDOUBLE
             case 5:
-              digitalWrite(accessory[this->target].outputPin, LOW);
+              digitalWrite(accessory[this->target].outputPin1, LOW);
               accessory[this->target].dccstate = 0;
               accessory[this->target].onoff = 0;
               this->state = TT_STOP;
@@ -407,7 +407,7 @@ void Lights::process(void)
               accessory[this->target].onoff = 0;
 
               accessory[this->target].fade = 0;
-              analogWrite(accessory[this->target].outputPin, accessory[this->target].fade);
+              analogWrite(accessory[this->target].outputPin1, accessory[this->target].fade);
 
               this->state = TT_STOP;
             break;
@@ -418,7 +418,7 @@ void Lights::process(void)
           case 7:
             if (accessory[this->target].dccstate)
              {
-              digitalWrite(accessory[this->target].outputPin, LOW);
+              digitalWrite(accessory[this->target].outputPin1, LOW);
               accessory[this->target].dccstate = 0;
               accessory[this->target].onoff = 0;
               this->state = TT_STOP;
@@ -429,7 +429,7 @@ void Lights::process(void)
           case 8:
             if (accessory[this->target].dccstate)
              {
-              digitalWrite(accessory[this->target].outputPin, LOW);
+              digitalWrite(accessory[this->target].outputPin1, LOW);
               accessory[this->target].dccstate = 0;
               accessory[this->target].onoff = 0;
               this->state = TT_STOP;
@@ -440,7 +440,7 @@ void Lights::process(void)
           case 9:
             if (accessory[this->target].dccstate)
              {
-              digitalWrite(accessory[this->target].outputPin, LOW);
+              digitalWrite(accessory[this->target].outputPin1, LOW);
               accessory[this->target].dccstate = 0;
               accessory[this->target].onoff = 0;
               this->state = TT_STOP;
@@ -451,7 +451,7 @@ void Lights::process(void)
           case 10:
             if (accessory[this->target].dccstate)
              {
-              digitalWrite(accessory[this->target].outputPin, LOW);
+              digitalWrite(accessory[this->target].outputPin1, LOW);
               accessory[this->target].dccstate = 0;
               accessory[this->target].onoff = 0;
               this->state = TT_STOP;
@@ -462,7 +462,7 @@ void Lights::process(void)
           case 11:
             if (accessory[this->target].dccstate)
              {
-              digitalWrite(accessory[this->target].outputPin, LOW);
+              digitalWrite(accessory[this->target].outputPin1, LOW);
               accessory[this->target].dccstate = 0;
               accessory[this->target].onoff = 0;
               this->state = TT_STOP;
@@ -473,7 +473,7 @@ void Lights::process(void)
           case 12:
             if (accessory[this->target].dccstate)
              {
-              digitalWrite(accessory[this->target].outputPin, LOW);
+              digitalWrite(accessory[this->target].outputPin1, LOW);
               accessory[this->target].dccstate = 0;
               accessory[this->target].onoff = 0;
               this->state = TT_STOP;
@@ -484,7 +484,7 @@ void Lights::process(void)
           case 13:
             if (accessory[this->target].dccstate)
              {
-              digitalWrite(accessory[this->target].outputPin, LOW);
+              digitalWrite(accessory[this->target].outputPin1, LOW);
               accessory[this->target].dccstate = 0;
               accessory[this->target].onoff = 0;
               this->state = TT_STOP;
@@ -495,7 +495,7 @@ void Lights::process(void)
           case 14:
             if (accessory[this->target].dccstate)
              {
-              digitalWrite(accessory[this->target].outputPin, LOW);
+              digitalWrite(accessory[this->target].outputPin1, LOW);
               accessory[this->target].dccstate = 0;
               accessory[this->target].onoff = 0;
               this->state = TT_STOP;
@@ -506,7 +506,7 @@ void Lights::process(void)
           case 15:
             if (accessory[this->target].dccstate)
              {
-              digitalWrite(accessory[this->target].outputPin, LOW);
+              digitalWrite(accessory[this->target].outputPin1, LOW);
               accessory[this->target].dccstate = 0;
               accessory[this->target].onoff = 0;
               this->state = TT_STOP;
@@ -544,7 +544,7 @@ void Lights::process(void)
 #endif
 */
 
-        switch (accessory[i].mode)
+        switch (accessory[i].mode1)
          {
 #ifdef ACTION_ONOFF
           case 0:                                         // oneshot
@@ -556,7 +556,7 @@ void Lights::process(void)
           case 1:                                         // oneshot
             if (millis() > accessory[i].offMilli)
              {
-              digitalWrite(accessory[i].outputPin, LOW);
+              digitalWrite(accessory[i].outputPin1, LOW);
               accessory[i].dccstate = 0;
               accessory[i].onoff = 0;
               this->state = TT_STOP;
@@ -568,7 +568,7 @@ void Lights::process(void)
           case 2:                                         // flashing
             if (accessory[i].onoff && millis() > accessory[i].offMilli)
              {
-              digitalWrite(accessory[i].outputPin, LOW);
+              digitalWrite(accessory[i].outputPin1, LOW);
               accessory[i].onMilli = millis() + (accessory[i].offtime * accessory[i].offtimeX);
               accessory[i].onoff = 0;
               this->state = TT_STOP;
@@ -577,7 +577,7 @@ void Lights::process(void)
              {
               if (!accessory[i].onoff && millis() > accessory[i].onMilli)
                {
-                digitalWrite(accessory[i].outputPin, HIGH);
+                digitalWrite(accessory[i].outputPin1, HIGH);
                 accessory[i].offMilli = millis() + (accessory[i].ontime * accessory[i].ontimeX);
                 accessory[i].onoff = 1;
                 this->state = TT_STOP;
@@ -595,7 +595,7 @@ void Lights::process(void)
                {
                 if ( millis() > accessory[i].offMilli + accessory[i].fadein )
                  {
-                  analogWrite(accessory[i].outputPin, accessory[i].fade);
+                  analogWrite(accessory[i].outputPin1, accessory[i].fade);
                   accessory[i].offMilli += accessory[i].fadein;
 
                   accessory[i].fade += 5;
@@ -621,7 +621,7 @@ void Lights::process(void)
                  {
                   if ( millis() > accessory[i].onMilli + accessory[i].fadeout )
                    {
-                    analogWrite(accessory[i].outputPin, accessory[i].fade);
+                    analogWrite(accessory[i].outputPin1, accessory[i].fade);
                     accessory[i].onMilli += accessory[i].fadeout;
 
                     accessory[i].fade -= 5;
@@ -646,7 +646,7 @@ void Lights::process(void)
           case 4:                                         // flashing alternate
             if (accessory[i].onoff && millis() > accessory[i].offMilli)
              {
-              digitalWrite(accessory[i].outputPin, LOW);
+              digitalWrite(accessory[i].outputPin1, LOW);
               digitalWrite(accessory[i].outputPin2, HIGH);
               accessory[i].onMilli = millis() + (accessory[i].offtime * accessory[i].offtimeX);
               accessory[i].onoff = 0;
@@ -656,7 +656,7 @@ void Lights::process(void)
              {
               if (!accessory[i].onoff && millis() > accessory[i].onMilli)
                {
-                digitalWrite(accessory[i].outputPin, HIGH);
+                digitalWrite(accessory[i].outputPin1, HIGH);
                 digitalWrite(accessory[i].outputPin2, LOW);
                 accessory[i].offMilli = millis() + (accessory[i].ontime * accessory[i].ontimeX);
                 accessory[i].onoff = 1;
@@ -678,9 +678,9 @@ void Lights::process(void)
              {
               if (!accessory[i].onoff && millis() > accessory[i].onMilli)
                {
-                this->strobe(accessory[i].outputPin);
+                this->strobe(accessory[i].outputPin1);
                 delay(STROBE_DELAY);
-                this->strobe(accessory[i].outputPin);
+                this->strobe(accessory[i].outputPin1);
                 accessory[i].offMilli = millis() + (accessory[i].ontime * accessory[i].ontimeX);
                 accessory[i].onoff = 1;
                 this->state = TT_STOP;
@@ -694,7 +694,7 @@ void Lights::process(void)
             if (accessory[i].onoff && millis() > accessory[i].onMilli)
              {
               accessory[i].fade = random(255);
-              analogWrite(accessory[i].outputPin, accessory[i].fade);
+              analogWrite(accessory[i].outputPin1, accessory[i].fade);
               accessory[i].onMilli = millis() + (accessory[i].ontime * accessory[i].ontimeX);
               this->state = TT_STOP;
              }
