@@ -4,7 +4,7 @@
 
 // Un-Comment the line below to force CVs to be written to the Factory Default values
 // defined in the FactoryDefaultCVs below on Start-Up
-//#define FORCE_RESET_FACTORY_DEFAULT_CV
+//#define FORCE_RESET_FACTORY_DEFAULT_CV 1
 
 
 // Un-comment the following to allow address learning
@@ -18,6 +18,9 @@
 
 // to show lights debug messages
 //#define DEBUG_MSG_LIGHTS
+//#define DEBUG_MSG_LIGHTS_1
+//#define DEBUG_MSG_LIGHTS_2
+//#define DEBUG_MSG_LIGHTS_3
 
 // Uncomment to print all DCC Packets
 //#define  NOTIFY_DCC_MSG
@@ -44,7 +47,7 @@
 // Set the Decoder Version - Used by JMRI to Identify the decoder
 #define DCC_DECODER_VERSION_NUM 11
 
-#define ACTION_ONOFF                        // on off by command
+//#define ACTION_ONOFF                        // on off by command
 //#define ACTION_ONESHOT                      // one shot flash
 //#define ACTION_FLASH                        // flash on single pin
 //#define ACTION_FLASHFADER                   // flash with fade up/down
@@ -78,6 +81,11 @@
 
 
 // the number of CVs requried for each address
-#define NUMBER_OF_CVS 12
-  
+//#define NUMBER_OF_CVS 12
+#define NUMBER_OF_CVS 10
+
+// the first CV used to store configuration data
+//#define CV_BASE_NUMBER 33
+#define CV_DECODER_MODE CV_MANUFACTURER_START 
+#define CV_BASE_NUMBER CV_MANUFACTURER_START + 1
   

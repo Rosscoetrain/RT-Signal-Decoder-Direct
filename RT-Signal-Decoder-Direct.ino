@@ -8,15 +8,9 @@
 #include <NmraDcc.h>
 #include "version.h"
 #include "defines.h"
-
 #include "Lights.h"
-
 #include "variables.h"
-
-
 #include "functions.h"
-
-
 
 /**********************************************************************
  * setup
@@ -40,7 +34,7 @@ void setup()
   pinMode( DccAckPin, OUTPUT );
 #endif
 
-  lLights.init(Dcc);
+  lLights.init(Dcc, outputs);
 
   // Setup which External Interrupt, the Pin it's associated with that we're using and enable the Pull-Up
   // Many Arduino Cores now support the digitalPinToInterrupt() function that makes it easier to figure out the
@@ -55,12 +49,21 @@ void setup()
   // Call the main DCC Init function to enable the DCC Receiver
   Dcc.init( MAN_ID_DIY, DCC_DECODER_VERSION_NUM, CV29_ACCESSORY_DECODER | CV29_OUTPUT_ADDRESS_MODE, 0 );
 
-#ifdef FORCE_RESET_FACTORY_DEFAULT_CV
+
+
+
+//if (Dcc.getCV(CV_MANUFACTURER_ID) == 8)
+if (FORCE_CVS ||
+    (Dcc.getCV(CV_MANUFACTURER_ID) != MANUF_ID)
+   )
+ {
+//#ifdef FORCE_RESET_FACTORY_DEFAULT_CV
 #ifdef ENABLE_SERIAL
   Serial.println("Resetting CVs to Factory Defaults");
 #endif
-  notifyCVResetFactoryDefault(); 
-#endif
+  notifyCVResetFactoryDefault();
+ }
+//#endif
 
   BaseDecoderAddress = (((Dcc.getCV(CV_ACCESSORY_DECODER_ADDRESS_MSB) * 256) + Dcc.getCV(CV_ACCESSORY_DECODER_ADDRESS_LSB) - 1) * 4) + 1  ;
 
@@ -68,6 +71,7 @@ void setup()
   Serial.print("DCC Base Address: "); Serial.println(BaseDecoderAddress, DEC);
 #endif
 
+#ifndef ENABLE_SERIAL
   pinMode(LED_BUILTIN, OUTPUT);
   digitalWrite(LED_BUILTIN, HIGH);
   delay(200);
@@ -84,6 +88,7 @@ void setup()
   digitalWrite(LED_BUILTIN, HIGH);
   delay(600);
   digitalWrite(LED_BUILTIN, LOW);
+#endif
 
 #ifdef ENABLE_SERIAL
 //  Serial.println("NMRA DCC Example 1");
@@ -108,20 +113,20 @@ void loop()
 #ifdef LEARNING
   static int learningbuttonOldval = 0,learningbuttonVal = 0;
 #endif
-  
+
+//#ifdef FORCE_RESET_FACTORY_DEFAULT_CV
+  if( FactoryDefaultCVIndex && Dcc.isSetCVReady())
+  {
+    FactoryDefaultCVIndex--; // Decrement first as initially it is the size of the array 
+    Dcc.setCV( FactoryDefaultCVs_8x2[FactoryDefaultCVIndex].CV, FactoryDefaultCVs_8x2[FactoryDefaultCVIndex].Value);
+  }
+//#endif
+
   // You MUST call the NmraDcc.process() method frequently from the Arduino loop() function for correct library operation
   Dcc.process();
 
   lLights.process();
   
-#ifdef FORCE_RESET_FACTORY_DEFAULT_CV
-  if( FactoryDefaultCVIndex && Dcc.isSetCVReady())
-  {
-    FactoryDefaultCVIndex--; // Decrement first as initially it is the size of the array 
-    Dcc.setCV( FactoryDefaultCVs[FactoryDefaultCVIndex].CV, FactoryDefaultCVs[FactoryDefaultCVIndex].Value);
-  }
-#endif
-
 #ifdef LEARNING
   learningbuttonVal = dr(LEARNINGBUTTON);
 

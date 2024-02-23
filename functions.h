@@ -92,22 +92,12 @@ void doSerialCommand(String readString)
    {
     Serial.println(F("Help Text"));
 
-
+/*
     Serial.println(F("Close a turnout: <C address>"));
     Serial.println(F("Throw a turnout: <T address>"));
-
-    Serial.println(F("Set decoder base address: <A address>"));
-/*
-    Serial.println(F("Set decoder output pulse time: <P  mS / 10>"));
-    Serial.println(F("Set decoder CDU recharge time: <R  mS / 10>"));
-    Serial.println(F("Set deocder active state: <S  0/1>"));
 */
 
-//    Serial.print(F("Change decoder address LSB: <W ")); Serial.print(CV_ACCESSORY_DECODER_ADDRESS_LSB); Serial.println(F(" address>"));
-//    Serial.print(F("Change decoder address MSB: <W ")); Serial.print(CV_ACCESSORY_DECODER_ADDRESS_MSB); Serial.println(F(" address>"));
-//    Serial.print(F("Set decoder output pulse time: <W ")); Serial.print(CV_ACCESSORY_DECODER_OUTPUT_PULSE_TIME); Serial.println(F(" mS / 10>"));
-//    Serial.print(F("Set decoder CDU recharge time: <W ")); Serial.print(CV_ACCESSORY_DECODER_CDU_RECHARGE_TIME); Serial.println(F(" mS / 10>"));
-//    Serial.print(F("Set deocder active state: <W ")); Serial.print(CV_ACCESSORY_DECODER_ACTIVE_STATE); Serial.println(F(" 0/1>"));
+    Serial.println(F("Set decoder base address: <A address>"));
 
     Serial.println(F("Show current CVs: <>"));
                      
@@ -121,11 +111,11 @@ void doSerialCommand(String readString)
 
 
       Serial.println(F("CVs are:"));
-      Serial.print(F("CV"));
+      Serial.print(F("CV "));
       Serial.print(CV_ACCESSORY_DECODER_ADDRESS_LSB);
       Serial.print(F(" = "));
       Serial.println(Dcc.getCV(CV_ACCESSORY_DECODER_ADDRESS_LSB));
-      Serial.print(F("CV"));
+      Serial.print(F("CV "));
       Serial.print(CV_ACCESSORY_DECODER_ADDRESS_MSB);
       Serial.print(F(" = "));
       Serial.println(Dcc.getCV(CV_ACCESSORY_DECODER_ADDRESS_MSB));
@@ -135,17 +125,29 @@ void doSerialCommand(String readString)
       Serial.print(F(" = "));
       Serial.println(Dcc.getCV(CV_ACCESSORY_DECODER_WAIT_TIME));
 */
-      Serial.print(F("CV"));
+      Serial.print(F("CV "));
+      Serial.print(CV_MANUFACTURER_ID);
+      Serial.print(F(" = "));
+      Serial.println(Dcc.getCV(CV_MANUFACTURER_ID));
+
+
+      Serial.print(F("CV "));
       Serial.print(CV_29_CONFIG);
       Serial.print(F(" = "));
       Serial.println(Dcc.getCV(CV_29_CONFIG));
+
+      Serial.print(F("CV "));
+      Serial.print(CV_DECODER_MODE);
+      Serial.print(F(" = "));
+      Serial.println(Dcc.getCV(CV_DECODER_MODE));
+      
 
       int CV = 0;
       for (int i = 0; i < MAXACCESSORIES; i++)
        {
         for (int j = 0; j < 9; j++)
          {
-          CV = (33 + j) + (i * 10);
+          CV = (CV_BASE_NUMBER + j) + (i * 10);
           Serial.print("CV ");
           Serial.print(CV);
           Serial.print(F(" = "));
@@ -335,7 +337,7 @@ void doSerialCommand(String readString)
          }
 */
 
-/*
+
         if (readString.startsWith("<W"))
          {
           StringSplitter *splitter = new StringSplitter(readString, ' ', 3);  // new StringSplitter(string_to_split, delimiter, limit)
@@ -347,6 +349,7 @@ void doSerialCommand(String readString)
             int value = splitter->getItemAtIndex(2).toInt();
 
             switch (addr) {
+/*
               case CV_ACCESSORY_DECODER_ADDRESS_LSB:                  // CV1
 
                     byte L = (value + 3) / 4;
@@ -357,26 +360,34 @@ void doSerialCommand(String readString)
                   Serial.print(F(" H = ")); Serial.println(H);
                   Serial.print(F(" L = ")); Serial.println(L);
 #endif
-                  
+
                   Dcc.setCV(CV_ACCESSORY_DECODER_ADDRESS_MSB, H);
                   Dcc.setCV(CV_ACCESSORY_DECODER_ADDRESS_LSB, L);
               break;
               case CV_ACCESSORY_DECODER_ADDRESS_MSB:                  // CV9
                   Dcc.setCV(CV_ACCESSORY_DECODER_ADDRESS_MSB, value);
               break;
-
+*/
               case 8:
                 if (value == 8)
                  {
+//                  Dcc.setCV(addr, value);
+                     notifyCVResetFactoryDefault();
                  }
               break;
 
               case 33:
-                  Serial.print(addr);Serial.print(" = ");Serial.println(value);
-                  Dcc.setCV(addr, value);
-                  Dcc.setCV(addr, value);
+                  if((value >= 0) && (value <=2))
+                   {
+                    Serial.print(addr);Serial.print(" = ");Serial.println(value);
+                    Dcc.setCV(addr, value);
+                   }
+                  else
+                   {
+                    Serial.println("Invalid mode");
+                   }
               break;
-              
+
               default:
 
                  Serial.println(F("Invalid cv number: should be <W cv value> "));
@@ -390,7 +401,7 @@ void doSerialCommand(String readString)
           delete splitter;
           splitter = NULL;
          }
-*/
+
 
        }
       else
@@ -431,14 +442,14 @@ originally in the main ino file
 */
 
 
-#ifdef FORCE_RESET_FACTORY_DEFAULT_CV
+//#ifdef FORCE_RESET_FACTORY_DEFAULT_CV
 void notifyCVResetFactoryDefault()
 {
   // Make FactoryDefaultCVIndex non-zero and equal to num CV's to be reset 
   // to flag to the loop() function that a reset to Factory Defaults needs to be done
-  FactoryDefaultCVIndex = sizeof(FactoryDefaultCVs)/sizeof(CVPair);
+  FactoryDefaultCVIndex = sizeof(FactoryDefaultCVs_8x2)/sizeof(CVPair);
 };
-#endif
+//#endif
 
 #ifdef ENABLE_DCC_ACK
 // This function is called by the NmraDcc library when a DCC ACK needs to be sent
@@ -457,13 +468,16 @@ void notifyCVAck(void)
 #ifdef NOTIFY_DCC_MSG
 void notifyDccMsg( DCC_MSG * Msg)
 {
-  Serial.print("notifyDccMsg: ") ;
-  for(uint8_t i = 0; i < Msg->Size; i++)
-  {
-    Serial.print(Msg->Data[i], HEX);
-    Serial.write(' ');
-  }
-  Serial.println();
+  if (Msg->Size > 3)
+   {
+    Serial.print("notifyDccMsg: ") ;
+   for(uint8_t i = 0; i < Msg->Size; i++)
+    {
+     Serial.print(Msg->Data[i], HEX);
+     Serial.write(' ');
+    }
+   Serial.println();
+   }
 }
 #endif
 
@@ -548,11 +562,26 @@ void notifyDccAccTurnoutOutput( uint16_t Addr, uint8_t Direction, uint8_t Output
 // This function is called whenever a DCC Signal Aspect Packet is received
 void notifyDccSigOutputState( uint16_t Addr, uint8_t State)
 {
+
+#ifdef NOTIFY_SIGNAL_MSG
   Serial.print("notifyDccSigOutputState: ") ;
   Serial.print(Addr,DEC) ;
   Serial.print(',');
   Serial.println(State, HEX) ;
+#endif
+
+  if(( Addr >= BaseDecoderAddress ) && ( Addr < (BaseDecoderAddress + MAXACCESSORIES )))
+   {
+
+    thisCommand = ( ( ( Addr - BaseDecoderAddress ) * 10 ) + 1 ) + State;
+
+    lLights.addCommand(thisCommand);
+
+#ifdef  DEBUG_MSG
+    Serial.print("ndsos thisCommand: ");
+    Serial.println(thisCommand,DEC);
+#endif
+   }
+
+  
 }
-
-
-

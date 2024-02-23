@@ -24,9 +24,11 @@ typedef struct {
   byte              mode1;            // User Configurable. mode for outputPin1
   byte              mode2;            // User configurable, mode for outputPin2
   byte              mode3;            // User configurable, mode for outputPin3
+  byte              mode4;            // User configurable, mode for outputPin4
   byte              outputPin1;       // User Configurable. Arduino pin where accessory is connected to
   byte              outputPin2;       // User Configurable. 2nd pin for AlternatingFlasher (e.g. railway crossing)
   byte              outputPin3;       // User Configurable. 3rd pin for e.g. amber aspect
+  byte              outputPin4;       // User Configurable. 4th pin for e.g. white aspect
   byte              ontime;           // User Configurable. Oneshot or Flasher on time in ms X ontimeX
   byte              ontimeX;          // User Configurable. on time multiplier
   byte              offtime;          // User Configurable. Flasher off time in ms X offtimeX
@@ -55,24 +57,9 @@ class Lights
     DCCAccessoryAddress accessory[MAXACCESSORIES];
 
 
-/*
-#ifndef ARDUINO_AVR_DIGISPARK
-#ifdef ACTION_FLASHFADER
-    void fader(byte pin, int rate, byte fade);
-#endif
-#else
-#ifdef ACTION_FLASHFADER
-//    void fader(byte pin, byte rate);
-#endif
-#endif
-
-#ifdef ACTION_STROBEDOUBLE
-    void strobe(byte pin);
-#endif
-*/
 
   public:
-    void init(NmraDcc Dcc);
+    void init(NmraDcc Dcc, byte* outputs);
     void addCommand(uint8_t command);
     void process(void);
 

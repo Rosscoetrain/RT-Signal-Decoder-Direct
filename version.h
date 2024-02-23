@@ -18,8 +18,9 @@
 #ifndef VERSION_H
 #define VERSION_H
 
-#define VERSION "0.0.1"
+#define VERSION "0.0.2"
 
+// 0.0.2  - move mode and outputpin to combined CV.
 // 0.0.1  - Initial adaptation of NMRA example accessory decoder
 
 #endif
