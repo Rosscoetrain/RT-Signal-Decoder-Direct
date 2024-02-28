@@ -11,8 +11,8 @@ DCC_MSG  Packet ;
 // A1 is missing in the sequence as it is used for the DCC ACK
 
 //   base address 1T 1C 2T 2C 3T 3C  4T 4C  5T  5C  6T  6C  7T  7C  8T  8C
-byte outputs[] = { 4, 3, 6, 5, 8, 7, 10, 9, 12, 11, 14, 13, 17, 16, 19, 18};
-//   pins         D4 D3 D6 D5 D8 D7 D10 D9 D12 D11  A0 D13  A3  A2  A5  A4
+byte outputs[] = { 4, 3, 6, 5, 8, 7, 10, 9, 12, 11, 13, 14, 16, 17, 19, 18};
+//   pins         D4 D3 D6 D5 D8 D7 D10 D9 D12 D11 D13  A0  A2  A3  A5  A4
 // index hex       0  1  2  3  4  5   6  7   8   9   A   B   C   D   E   F
 // index dec       0  1  2  3  4  5   6  7   8   9  10  11  12  13  14  15
 
@@ -31,7 +31,7 @@ Mode and outputPin to one CV and have them organised as:
 Bit 7 6 5 4 3 2 1 0
     m m m m p p p p
 
-mmmm = mode
+mmmm = mode default is 0 not currently used (2024-02-28)
 pppp = outputPin
 
                   address CV
@@ -68,6 +68,27 @@ ontimeX offtimeX
   multiplier for on or off times
 
 */
+
+
+/*
+aspect
+
+0 = red
+1 = green
+2 = amber
+3 = amber amber
+4 = flashing red
+5 = flashing green
+6 = flashing amber
+7 = alternate flash
+8 = alternate flash fade
+9 = double strobe
+10 = single strobe
+
+18 = dark
+*/
+
+
 
 
 //#ifdef FORCE_RESET_FACTORY_DEFAULT_CV
@@ -257,6 +278,7 @@ aspects
 4 - flash green
 5 - flash amber
 
+31 - dark
 */
 
 
@@ -272,7 +294,7 @@ int LEARNINGBUTTON = 0;    // pin 0
 int learningMode = LOW;
 #endif
 
-byte thisCommand = 0;
+uint16_t thisCommand = 0;
 
 #ifdef ENABLE_SERIAL
 // buffer to hold serial commands

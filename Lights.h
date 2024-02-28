@@ -37,7 +37,7 @@ typedef struct {
   byte              onoff;            // Internal use. Output state of accessory: 1=on, 0=off
   byte              fadein;           // fade in time for fader
   byte              fadeout;          // fade out time for fader
-  int               fade;             // fade level
+  byte              fade;             // fade level
   byte              onoff2;           // Internal use. Output state of AlternatingFlasher 1=on, 0=off NOT USED
   byte              finished;         // Internal use. Memory that says the Oneshot is finished
   unsigned long     onMilli;          // Internal use.
@@ -56,7 +56,7 @@ class Lights
     
     DCCAccessoryAddress accessory[MAXACCESSORIES];
 
-
+    void strobe(uint8_t pin);
 
   public:
     void init(NmraDcc Dcc, byte* outputs);

@@ -21,6 +21,8 @@
 //#define DEBUG_MSG_LIGHTS_1
 //#define DEBUG_MSG_LIGHTS_2
 //#define DEBUG_MSG_LIGHTS_3
+//#define DEBUG_MSG_LIGHTS_9
+//#define DEBUG_MSG_LIGHTS_10
 
 // Uncomment to print all DCC Packets
 //#define  NOTIFY_DCC_MSG
@@ -77,7 +79,7 @@
 
 #define TT_MOVER_SLOT_EMPTY 255
 
-//#define STROBE_DELAY 100
+#define STROBE_DELAY 100
 
 
 // the number of CVs requried for each address
@@ -88,4 +90,6 @@
 //#define CV_BASE_NUMBER 33
 #define CV_DECODER_MODE CV_MANUFACTURER_START 
 #define CV_BASE_NUMBER CV_MANUFACTURER_START + 1
-  
+
+
+#define COMMAND_OFFSET 20

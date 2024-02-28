@@ -540,7 +540,7 @@ void notifyDccAccTurnoutOutput( uint16_t Addr, uint8_t Direction, uint8_t Output
     if(( Addr >= BaseDecoderAddress ) && ( Addr < (BaseDecoderAddress + MAXACCESSORIES )) && OutputPower )
      {
 
-      thisCommand = ( ( ( Addr - BaseDecoderAddress ) * 10 ) + 1 ) + Direction;
+      thisCommand = ( ( ( Addr - BaseDecoderAddress ) * COMMAND_OFFSET ) + 1 ) + Direction;
 
       lLights.addCommand(thisCommand);
 
@@ -564,22 +564,28 @@ void notifyDccSigOutputState( uint16_t Addr, uint8_t State)
 {
 
 #ifdef NOTIFY_SIGNAL_MSG
-  Serial.print("notifyDccSigOutputState: ") ;
-  Serial.print(Addr,DEC) ;
-  Serial.print(',');
-  Serial.println(State, HEX) ;
+  if(State != 18)
+   {
+    Serial.print("notifyDccSigOutputState: ") ;
+    Serial.print(Addr,DEC) ;
+    Serial.print(',');
+    Serial.println(State, DEC) ;
+   }
 #endif
 
   if(( Addr >= BaseDecoderAddress ) && ( Addr < (BaseDecoderAddress + MAXACCESSORIES )))
    {
 
-    thisCommand = ( ( ( Addr - BaseDecoderAddress ) * 10 ) + 1 ) + State;
+    thisCommand = ( ( ( Addr - BaseDecoderAddress ) * COMMAND_OFFSET ) + 1 ) + State;
 
     lLights.addCommand(thisCommand);
 
 #ifdef  DEBUG_MSG
+//  if(State != 18)
+//   {
     Serial.print("ndsos thisCommand: ");
     Serial.println(thisCommand,DEC);
+//   }
 #endif
    }
 
