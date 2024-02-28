@@ -13,19 +13,25 @@ Additions include:
 -- modes set by CV
 
 
-It provides control of up to 8 2 aspect signals, or 4 3 aspect signals.
+It provides control of up to 8 2 aspect signals, or 4 3/4 aspect signals.
 
 
-Various modes can be set including:
+Aspects available are:
 
-  0 continuous (stays on until off command received)
-  1 oneshot (on for ontime once)
-  2 flashing (alternate ontime offtime until off command received)
-  3 flash/fade (alternate ontime offtime until off command received fade in/out)
-  4 flash alternate (requires two output pins)
-  5 flash/face alternate (as 5 but fade in/out)
-  6 strobe double
-  7 random brightness
+0 = red
+1 = green
+2 = amber
+3 = amber amber
+4 = flashing red
+5 = flashing green
+6 = flashing amber
+7 = alternate flash
+8 = alternate flash fade
+9 = double strobe
+10 = single strobe
+
+18 = dark
+
 
 The hardware that this can be used with is here:
 
