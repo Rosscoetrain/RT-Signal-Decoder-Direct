@@ -39,3 +39,5 @@ https://github.com/Rosscoetrain/RT-Hardware/tree/master/RT_Pulse_8_decoder
 
 However there is a modification needed to the hardware if using incandescent lamps.
 
+The wiring and CV programming for the signals can be found in the docs folder.
+
