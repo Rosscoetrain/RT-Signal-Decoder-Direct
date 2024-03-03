@@ -145,9 +145,9 @@ void doSerialCommand(String readString)
       int CV = 0;
       for (int i = 0; i < MAXACCESSORIES; i++)
        {
-        for (int j = 0; j < 9; j++)
+        for (int j = 0; j <= (NUMBER_OF_CVS - 1); j++)
          {
-          CV = (CV_BASE_NUMBER + j) + (i * 10);
+          CV = (CV_BASE_NUMBER + j) + (i * NUMBER_OF_CVS);
           Serial.print("CV ");
           Serial.print(CV);
           Serial.print(F(" = "));
@@ -387,6 +387,19 @@ void doSerialCommand(String readString)
                     Serial.println("Invalid mode");
                    }
               break;
+
+              case CV_BASE_NUMBER ... CV_BASE_NUMBER + (MAXACCESSORIES * NUMBER_OF_CVS):
+                  if((value >= 0) && (value <= 255))
+                   {
+                    Serial.print(addr);Serial.print(" = ");Serial.println(value);
+//                    Dcc.setCV(addr, value);
+                   }
+                  else
+                   {
+                    Serial.println("Invalid value");
+                   }
+              break;
+
 
               default:
 
