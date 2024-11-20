@@ -36,16 +36,16 @@ pppp = outputPin
 
                   address CV
                   1   2   3   4   ...
-outputPin1Mode1   33  43  53  63                    CV_BASE_NUMBER + 0
-outputPin2Mode2   34  44  54  64                    CV_BASE_NUMBER + 1
-outputPin3Mode3   35  45  55  65                    CV_BASE_NUMBER + 2 
-outputPin4Mode4   36  46  56  66                    CV_BASE_NUMBER + 3
-ontime            37  47  57  67                    CV_BASE_NUMBER + 4
-ontimeX           38  48  58  68                    CV_BASE_NUMBER + 5
-offtime           39  49  59  69                    CV_BASE_NUMBER + 6
-offtimeX          40  50  60  70                    CV_BASE_NUMBER + 7
-fadein            41  51  61  71                    CV_BASE_NUMBER + 8
-fadeout           42  52  62  72                    CV_BASE_NUMBER + 9
+outputPin1Mode1   34  44  54  64                    CV_BASE_NUMBER + 0
+outputPin2Mode2   35  45  55  65                    CV_BASE_NUMBER + 1
+outputPin3Mode3   36  46  56  66                    CV_BASE_NUMBER + 2 
+outputPin4Mode4   37  47  57  67                    CV_BASE_NUMBER + 3
+ontime            38  48  58  68                    CV_BASE_NUMBER + 4
+ontimeX           39  49  59  69                    CV_BASE_NUMBER + 5
+offtime           40  50  60  70                    CV_BASE_NUMBER + 6
+offtimeX          41  51  61  71                    CV_BASE_NUMBER + 7
+fadein            42  52  62  72                    CV_BASE_NUMBER + 8
+fadeout           43  53  63  73                    CV_BASE_NUMBER + 9
 
 accessory.outputPin1 = (CV & 0x0F)
 accessory.mode1 = (CV & 0xF0) >> 4
@@ -66,6 +66,9 @@ ontime offtime
 
 ontimeX offtimeX
   multiplier for on or off times
+
+fadein fadeout
+  fade in out time
 
 */
 
