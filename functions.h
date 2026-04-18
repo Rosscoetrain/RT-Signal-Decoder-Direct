@@ -1,6 +1,8 @@
 /*
- * functions.h
+ * @file functions.h
  */
+#ifndef FUNCTIONS_H
+#define FUNCTIONS_H
 
 #ifdef LEARNING
 bool dr (int pin)
@@ -45,6 +47,27 @@ void setVersion() {
   version = strtok(NULL, ".");
   versionBuffer[2] = atoi(version);  // Patch last
 }
+
+
+void showUserCVs()
+ {
+  int CV = 0;
+  for (int i = 0; i < MAXACCESSORIES; i++)
+   {
+    for (int j = 0; j <= (NUMBER_OF_CVS - 1); j++)
+     {
+      CV = (CV_BASE_NUMBER + j) + (i * NUMBER_OF_CVS);
+      Serial.print("CV ");
+      Serial.print(CV);
+      Serial.print(F(" = "));
+      Serial.print(Dcc.getCV(CV));
+      Serial.print("    ");
+     }
+    Serial.println();
+   }
+ }
+
+
 
 #ifdef ENABLE_SERIAL
 
@@ -141,7 +164,8 @@ void doSerialCommand(String readString)
       Serial.print(F(" = "));
       Serial.println(Dcc.getCV(CV_DECODER_MODE));
       
-
+      showUserCVs();
+/*
       int CV = 0;
       for (int i = 0; i < MAXACCESSORIES; i++)
        {
@@ -155,6 +179,7 @@ void doSerialCommand(String readString)
           
          }
        }
+*/
 
 /*
       Serial.print(F("CV"));
@@ -175,6 +200,11 @@ void doSerialCommand(String readString)
        {
 //        int pos = 0;
         // this is where commands are completed
+
+        if (readString.startsWith("<U>"))
+         {
+          showUserCVs();
+         }
 
         // command to turn on a light circuit <C address>
 
@@ -221,6 +251,13 @@ void doSerialCommand(String readString)
           delete splitter;
           splitter = NULL;
          }
+
+        if (readString.startsWith("<A>"))
+         {
+          Serial.println(BaseDecoderAddress);
+          readString = "";
+         }
+
 
          // command to set address <A address>
          // address will be adjusted to the correct base turnout address
@@ -604,3 +641,5 @@ void notifyDccSigOutputState( uint16_t Addr, uint8_t State)
 
   
 }
+
+#endif
