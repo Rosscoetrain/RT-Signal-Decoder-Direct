@@ -10,11 +10,20 @@ DCC_MSG  Packet ;
 // This is the Arduino Pin Mapping to decoder addresses with 2 pins per address 
 // A1 is missing in the sequence as it is used for the DCC ACK
 
+
+#ifdef PCB_REV_A
 //   base address 1T 1C 2T 2C 3T 3C  4T 4C  5T  5C  6T  6C  7T  7C  8T  8C
 byte outputs[] = { 4, 3, 6, 5, 8, 7, 10, 9, 12, 11, 13, 14, 16, 17, 19, 18};
 //   pins         D4 D3 D6 D5 D8 D7 D10 D9 D12 D11 D13  A0  A2  A3  A5  A4
 // index hex       0  1  2  3  4  5   6  7   8   9   A   B   C   D   E   F
 // index dec       0  1  2  3  4  5   6  7   8   9  10  11  12  13  14  15
+#else
+byte outputs[] = { 13, 14, 16, 17, 18, 19, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
+//   pins         D13  A0  A2  A3  A4  A5  D3 D4 D5 D6 D7 D8 D9 D10 D11 D12
+// index hex       0   1   2   3   4   5   6  7  8  9  A  B  C  D  E   F
+// index dec       0   1   2   3   4   5   6  7  8  9  10 11 12 13 14  15
+#endif
+
 
 
 struct CVPair

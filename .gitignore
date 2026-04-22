@@ -4,3 +4,4 @@ _old
 images
 temp.*
 docs/*.odt
+config.h

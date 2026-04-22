@@ -6,6 +6,14 @@
 // defined in the FactoryDefaultCVs below on Start-Up
 //#define FORCE_RESET_FACTORY_DEFAULT_CV 1
 
+// If we haven't got a custom config.h, use the example.
+#if __has_include ( "config.h")
+  #include "config.h"
+#else
+  #warning config.h not found. Using defaults from config.example.h
+  #include "config.example.h"
+#endif
+
 
 // Un-comment the following to allow address learning
 //#define LEARNING
