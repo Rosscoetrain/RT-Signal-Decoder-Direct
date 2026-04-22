@@ -4,6 +4,8 @@
 #ifndef FUNCTIONS_H
 #define FUNCTIONS_H
 
+#include "defines.h"
+
 #ifdef LEARNING
 bool dr (int pin)
  {
@@ -204,6 +206,7 @@ void doSerialCommand(String readString)
         if (readString.startsWith("<U>"))
          {
           showUserCVs();
+          readString = "";
          }
 
         // command to turn on a light circuit <C address>
@@ -296,83 +299,55 @@ void doSerialCommand(String readString)
           splitter = NULL;
          }
 
-/*
-        if (readString.startsWith("<P"))
+        if (
+// update outputPin1 CV
+           (readString.startsWith("<M"))
+// update outputPin2 CV
+        || (readString.startsWith("<N"))
+// update outputPin3 CV
+        || (readString.startsWith("<O"))
+// update outputPin4 CV
+        || (readString.startsWith("<P"))
+// update ontime CV
+        || (readString.startsWith("<Q"))
+// update ontimeX CV
+        || (readString.startsWith("<R"))
+// update offtime CV
+        || (readString.startsWith("<S"))
+// update offtimeX CV
+        || (readString.startsWith("<T"))
+// update fadein CV
+        || (readString.startsWith("<U"))
+// update fadeout CV
+        || (readString.startsWith("<V")))
+
          {
           StringSplitter *splitter = new StringSplitter(readString, ' ', 3);  // new StringSplitter(string_to_split, delimiter, limit)
           int itemCount = splitter->getItemCount();
 
-          if ( itemCount == 2)
+          if ( itemCount == 3)
            {
-            int addr = splitter->getItemAtIndex(1).toInt();
+            byte addr = splitter->getItemAtIndex(1).toInt();
+            int value = splitter->getItemAtIndex(2).toInt();
 
-#ifdef DEBUG_MSG
-            Serial.print(F("Value = ")); Serial.println(addr);
+#ifdef DEBUG_MSG_1
+            Serial.print(F("addr = ")); Serial.println(addr);
+            Serial.print(F("value = ")); Serial.println(value);
 #endif
 
-            Dcc.setCV(CV_ACCESSORY_DECODER_WAIT_TIME, addr);
+            Dcc.setCV(addr, value);
 
            }
           else
            {
-            Serial.println(F("Invalid command: should be <P ms/10>"));
-           }
-          delete splitter;
-          splitter = NULL;
-          resetFunc();
-         }
-*/
-
-
-/*
-        if (readString.startsWith("<R"))
-         {
-          StringSplitter *splitter = new StringSplitter(readString, ' ', 3);  // new StringSplitter(string_to_split, delimiter, limit)
-          int itemCount = splitter->getItemCount();
-
-          if ( itemCount == 2)
-           {
-            int addr = splitter->getItemAtIndex(1).toInt();
-
-#ifdef DEBUG_MSG
-            Serial.print(F("Value = ")); Serial.println(addr);
-#endif
-
-            Dcc.setCV(CV_ACCESSORY_DECODER_CDU_RECHARGE_TIME, addr);
-           }
-          else
-           {
-            Serial.println(F("Invalid command: should be <U ms/10>"));
+            Serial.println(F("Invalid command: should be <cmd addr value>"));
            }
           delete splitter;
           splitter = NULL;
          }
-*/
 
-/*
-        if (readString.startsWith("<S"))
-         {
-          StringSplitter *splitter = new StringSplitter(readString, ' ', 3);  // new StringSplitter(string_to_split, delimiter, limit)
-          int itemCount = splitter->getItemCount();
 
-          if (itemCount == 2)
-           {
-            int addr = splitter->getItemAtIndex(1).toInt();
 
-#ifdef DEBUG_MSG
-            Serial.print(F("Value = ")); Serial.println(addr);
-#endif
-
-             Dcc.setCV(CV_ACCESSORY_DECODER_ACTIVE_STATE, addr);
-           }
-          else
-           {
-            Serial.println(F("Invalid command: should be <S 0> or <S 1>"));
-           }
-          delete splitter;
-          splitter = NULL;
-         }
-*/
 
 
         if (readString.startsWith("<W"))
@@ -429,7 +404,7 @@ void doSerialCommand(String readString)
                   if((value >= 0) && (value <= 255))
                    {
                     Serial.print(addr);Serial.print(" = ");Serial.println(value);
-//                    Dcc.setCV(addr, value);
+                    Dcc.setCV(addr, value);
                    }
                   else
                    {

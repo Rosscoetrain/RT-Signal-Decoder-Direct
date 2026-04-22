@@ -10,9 +10,9 @@
  */
 
 // This is with the nano usb connector towards the output screw terminals
-//#define PCB_REV_A
+#define PCB_REV_A
 
 // This is with the nano usb connector towards the power and "DCC IN" screw terminals
-#define PCB_REV_B
+//#define PCB_REV_B
 
 

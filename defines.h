@@ -23,12 +23,14 @@
 
 // to show all debug messages
 //#define DEBUG_MSG
+#define DEBUG_MSG_1
 
 // to show lights debug messages
 //#define DEBUG_MSG_LIGHTS
 //#define DEBUG_MSG_LIGHTS_1
 //#define DEBUG_MSG_LIGHTS_2
 //#define DEBUG_MSG_LIGHTS_3
+//#define DEBUG_MSG_LIGHTS_8
 //#define DEBUG_MSG_LIGHTS_9
 //#define DEBUG_MSG_LIGHTS_10
 

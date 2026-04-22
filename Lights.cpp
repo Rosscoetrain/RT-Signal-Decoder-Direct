@@ -146,6 +146,8 @@ void Lights::process(void)
 //      Serial.print("thisCommand = ");Serial.println(this->thisCommand);
       Serial.print("Process 3: target = ");Serial.println(this->target);
       Serial.print("Process 3: direction = ");Serial.println(this->direction);
+      Serial.print("outputPin1: "); Serial.println(accessory[this->target].outputPin1);
+      Serial.print("outputPin2: "); Serial.println(accessory[this->target].outputPin2);
       Serial.println();
 #endif
 //          switch (accessory[this->target].mode1)
@@ -169,6 +171,14 @@ void Lights::process(void)
         break;
 
         case 1:                                                            // aspect 1 green signal
+#ifdef DEBUG_MSG_LIGHTS_3
+//      Serial.print("thisCommand = ");Serial.println(this->thisCommand);
+      Serial.print("Process 3: target = ");Serial.println(this->target);
+      Serial.print("Process 3: direction = ");Serial.println(this->direction);
+      Serial.print("outputPin1: "); Serial.println(accessory[this->target].outputPin1);
+      Serial.print("outputPin2: "); Serial.println(accessory[this->target].outputPin2);
+      Serial.println();
+#endif
 //          switch (accessory[this->target].mode1)
 //          {
 //           case 0:
@@ -282,6 +292,14 @@ void Lights::process(void)
         break;
 
         case 8:                                                            // aspect 8   alternate flash fade
+#ifdef DEBUG_MSG_LIGHTS_3
+//      Serial.print("thisCommand = ");Serial.println(this->thisCommand);
+      Serial.print("Process 3: target = ");Serial.println(this->target);
+      Serial.print("Process 3: direction = ");Serial.println(this->direction);
+      Serial.print("outputPin1: "); Serial.println(accessory[this->target].outputPin1);
+      Serial.print("outputPin2: "); Serial.println(accessory[this->target].outputPin2);
+      Serial.println();
+#endif
               accessory[this->target].offMilli = millis() + (accessory[this->target].ontime * accessory[this->target].ontimeX);
 
               accessory[this->target].dccstate = 8;
@@ -459,6 +477,11 @@ void Lights::process(void)
           break;
 
           case 8:                                         // alternate flash fader
+
+#ifdef DEBUG_MSG_LIGHTS_8
+            Serial.println("Flashing");
+#endif
+
             if ( (accessory[i].onoff) && (millis() > accessory[i].offMilli) )
              {
 
