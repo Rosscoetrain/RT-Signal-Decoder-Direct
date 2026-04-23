@@ -18,7 +18,11 @@
 #ifndef VERSION_H
 #define VERSION_H
 
-#define VERSION "0.1.1"
+#define VERSION "1.0.0"
+
+// 1.0.0  - production release
+
+
 
 // 0.1.1  - add aspect:
 //          8 = alternate flash fader
