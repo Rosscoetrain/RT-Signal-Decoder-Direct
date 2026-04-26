@@ -5,3 +5,5 @@ images
 temp.*
 docs/*.odt
 config.h
+docs/*
+

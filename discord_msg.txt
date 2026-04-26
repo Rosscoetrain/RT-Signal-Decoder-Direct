@@ -1,0 +1,43 @@
+Finally have sorted out the firmware for the DCC Coloured Light Signal Decoder and made the dedicated pcb's.
+
+These decoders respond to the following aspects:
+
+```
+Aspect   Output
+0        Red
+1        Green
+2        Amber
+3        Amber Amber
+4        Flashing Red
+5        Flashing Green
+6        Flashing Amber
+7        Alternate Flash
+8        Alternate Fade Flash
+9        Double Strobe
+10       Single Strobe
+31       Dark
+```
+
+The first three are the same as RED/GREEN/AMBER in exrail.  All aspects can be sent via ASPECT command in EX-Rail or <A .. ..> from the command station.
+
+They are available to suit common anode or common cathode led light signals.  Either will work with incandescent globes upto 100mA.
+
+Operating voltage at the LEDs can be 5V from track power or 3-24V from external power supply.
+
+LEDs will require a current limiting resistor.
+
+I'm looking at adding other aspects to the above list.
+
+The decoder can be setup via CV to be 8 2-aspect, 5 3-aspect or 4 4-aspect signals.
+
+https://rosscoe.com/shop/index.php?main_page=product_info&cPath=1&products_id=28
+
+
+More details in the Operating manual on the website
+
+Video of flash fade
+
+https://youtube.com/shorts/nM0e9_yhyRY?feature=share
+
+
+

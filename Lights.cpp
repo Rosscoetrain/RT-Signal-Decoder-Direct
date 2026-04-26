@@ -348,7 +348,7 @@ void Lights::process(void)
         case 11:
         break;
 
-        case 18:                                                 // aspect dark (18)
+        case 31:                                                 // aspect dark (31)
              digitalWrite(accessory[this->target].outputPin1, LOW);
              digitalWrite(accessory[this->target].outputPin2, LOW);
               if (accessory[this->target].outputPin3 != 0)
