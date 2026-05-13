@@ -21,6 +21,8 @@
 // Un-comment the following to allow serial communications
 #define ENABLE_SERIAL
 
+#define MYSERIAL Serial
+
 // to show all debug messages
 //#define DEBUG_MSG
 #define DEBUG_MSG_1

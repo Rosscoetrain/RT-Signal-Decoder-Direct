@@ -490,21 +490,64 @@ void notifyCVAck(void)
 #endif
 
 
-#ifdef NOTIFY_DCC_MSG
-void notifyDccMsg( DCC_MSG * Msg)
-{
-  if (Msg->Size > 3)
+void notifyDccMsg(DCC_MSG *Msg)
+ {
+// ignore idle messages and service mode reset
+
+  if (Msg->Data[0] == 0xFF || Msg->Data[0] == 0x7F || Msg->Data[0] == 0x00)
    {
-    Serial.print("notifyDccMsg: ") ;
-   for(uint8_t i = 0; i < Msg->Size; i++)
-    {
-     Serial.print(Msg->Data[i], HEX);
-     Serial.write(' ');
-    }
-   Serial.println();
+    return;
    }
-}
+
+  #ifdef NOTIFY_DCC_MSG
+    MYSERIAL.print("notifyDccMsg: ") ;
+    for(uint8_t i = 0; i < Msg->Size; i++)
+     {
+      MYSERIAL.print(Msg->Data[i], HEX);
+      MYSERIAL.write(' ');
+     }
+    MYSERIAL.println();
+  #endif
+
+// 1. Service Mode CV Write (Pattern 0x70)
+  if ((Msg->Data[0] & 0xF0) == 0x70)
+   {
+    uint16_t cv = (((Msg->Data[0] & 0x03) << 8) | Msg->Data[1]) + 1;
+    uint8_t val = Msg->Data[2];
+    Dcc.setCV(cv, val);
+    BaseDecoderAddress = Dcc.getAddr();
+   }
+
+// 2. POM (Programming on Main) (Pattern 0xE0)
+  if (Msg->Size >= 4)
+   {
+    if (Msg->Data[0] == BaseDecoderAddress)
+     {
+      if ((Msg->Data[1] & 0xF0) == 0xE0)
+       {
+        uint16_t cv = (((Msg->Data[1] & 0x03) << 8) | Msg->Data[2]) + 1;
+        uint8_t val = Msg->Data[3];
+#ifdef NOTIFY_DCC_MSG
+        MYSERIAL.print("CV : ");
+        MYSERIAL.print(cv);
+        MYSERIAL.print(" value : ");
+        MYSERIAL.println(val);
 #endif
+        if ((cv == 8) && (val == 8))
+         {
+#ifdef ENABLE_SERIAL
+          MYSERIAL.println(F("Reset factory default CVs"));
+#endif
+          notifyCVResetFactoryDefault();
+          return;
+         }
+        Dcc.setCV(cv, val);
+        BaseDecoderAddress = Dcc.getAddr();
+       }
+     }
+   }
+ }
+
 
 /*
 // This function is called whenever a normal DCC Turnout Packet is received and we're in Board Addressing Mode
