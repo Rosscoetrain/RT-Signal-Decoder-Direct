@@ -466,7 +466,7 @@ NMRA functions
 originally in the main ino file
 */
 
-
+/*
 //#ifdef FORCE_RESET_FACTORY_DEFAULT_CV
 void notifyCVResetFactoryDefault()
 {
@@ -564,6 +564,7 @@ void notifyDccAccTurnoutBoard( uint16_t BoardAddr, uint8_t OutputPair, uint8_t D
 }
 */
 
+/*
 // This function is called whenever a normal DCC Turnout Packet is received and we're in Output Addressing Mode
 void notifyDccAccTurnoutOutput( uint16_t Addr, uint8_t Direction, uint8_t OutputPower )
 {
@@ -659,5 +660,5 @@ void notifyDccSigOutputState( uint16_t Addr, uint8_t State)
 
   
 }
-
+*/
 #endif

@@ -11,6 +11,7 @@
 #include "Lights.h"
 #include "variables.h"
 #include "functions.h"
+#include "functions_dcc.h"
 
 /**********************************************************************
  * setup
