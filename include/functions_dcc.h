@@ -5,7 +5,7 @@
 #ifndef FUNCTIONS_DCC_H
 #define FUNCTIONS_DCC_H
 
-
+#include <EEPROM.h>
 
 
 void notifyCVResetFactoryDefault()
@@ -49,6 +49,7 @@ void notifyDccMsg(DCC_MSG *Msg)
     MYSERIAL.println();
   #endif
 
+/*
 // 1. Service Mode CV Write (Pattern 0x70)
   if ((Msg->Data[0] & 0xF0) == 0x70)
    {
@@ -86,6 +87,7 @@ void notifyDccMsg(DCC_MSG *Msg)
        }
      }
    }
+*/
  }
 
 
@@ -196,9 +198,54 @@ void notifyDccSigOutputState( uint16_t Addr, uint8_t State)
 //   }
 #endif
    }
-
-  
 }
+
+
+
+uint8_t notifyCVWrite (uint16_t CV, uint8_t Value)
+ {
+
+#if DEBUG == 6
+  MYSERIAL.print("notifyCVWrite cv : ");
+  MYSERIAL.print(CV);
+  MYSERIAL.print(" value : ");
+  MYSERIAL.println(Value);
+#endif
+
+  if ((CV == 8) && (Value == 8))  // factory reset return before writing to CV
+   {
+    notifyCVResetFactoryDefault();
+    return Value;
+   }
+  if (CV == 8)                    // ignore any attempts to write to CV8
+   {
+    return Value;
+   }
+  if ((CV == 1) || (CV == 9))     // ignore writes to CV1 and CV9 causes problems with actual address
+   {
+    return Value;
+   }
+
+  if ((CV - CV_BASE_NUMBER) % 10 < 4)  // output pin CV needs to be less that 16 for CVs CV_BASE_NUMBER + 0 to + 3
+   {
+    if (Value > 15)
+     {
+      return Value;
+     }
+   }
+
+  if (Dcc.getCV(CV) != Value)
+   {
+
+#if DEBUG == 6
+  MYSERIAL.print("Storing value : ");
+  MYSERIAL.println(Value);
+#endif
+
+    EEPROM.update(CV, Value);
+   }
+  return Value;
+ }
 
 
 #endif

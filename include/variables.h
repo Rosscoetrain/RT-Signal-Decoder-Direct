@@ -60,7 +60,7 @@ accessory.outputPin1 = (CV & 0x0F)
 accessory.mode1 = (CV & 0xF0) >> 4
 
 
-mode as at 27th February 2024 these are not used
+mode as at 27th February 2024 these are not used     all modes are controlled by the aspect received.
   0 continuous (stays on until off command received)
   1 oneshot (on for ontime once) ms / 100
   2 flashing (alternate ontime offtime until off command received)
