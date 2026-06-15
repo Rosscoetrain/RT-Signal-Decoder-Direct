@@ -1,36 +1,9 @@
 /*
- * variables.h
+ *
  */
 
-
-NmraDcc  Dcc ;
-DCC_MSG  Packet ;
-
-
-// This is the Arduino Pin Mapping to decoder addresses with 2 pins per address 
-// A1 is missing in the sequence as it is used for the DCC ACK
-
-
-#ifdef PCB_REV_A
-//   base address 1T 1C 2T 2C 3T 3C  4T 4C  5T  5C  6T  6C  7T  7C  8T  8C
-byte outputs[] = { 4, 3, 6, 5, 8, 7, 10, 9, 12, 11, 13, 14, 16, 17, 19, 18};
-//   pins         D4 D3 D6 D5 D8 D7 D10 D9 D12 D11 D13  A0  A2  A3  A5  A4
-// index hex       0  1  2  3  4  5   6  7   8   9   A   B   C   D   E   F
-// index dec       0  1  2  3  4  5   6  7   8   9  10  11  12  13  14  15
-#else
-byte outputs[] = { 13, 14, 16, 17, 18, 19, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
-//   pins         D13  A0  A2  A3  A4  A5  D3 D4 D5 D6 D7 D8 D9 D10 D11 D12
-// index hex       0   1   2   3   4   5   6  7  8  9  A  B  C  D  E   F
-// index dec       0   1   2   3   4   5   6  7  8  9  10 11 12 13 14  15
-#endif
-
-
-
-struct CVPair
-{
-  uint16_t  CV;
-  uint8_t   Value;
-};
+#ifndef DEFAULT_CVS_H
+#define DEFAULT_CVS_H
 
 
 /*
@@ -109,7 +82,6 @@ aspect
 * factory defaults for 8 x 2 aspect signal heads
 */
 
-/*
 CVPair FactoryDefaultCVs_8x2 [] =
 {
   {CV_ACCESSORY_DECODER_ADDRESS_LSB, DEFAULT_ACCESSORY_DECODER_ADDRESS & 0xFF},
@@ -215,14 +187,13 @@ CVPair FactoryDefaultCVs_8x2 [] =
   {CV_BASE_NUMBER + 78, 10},
   {CV_BASE_NUMBER + 79, 10},
 };
-*/
+
 
 
 /*
 * factory defaults for 4 x 3 or 4 aspect signal heads
 */
 
-/*
 CVPair FactoryDefaultCVs_4x4 [] =
 {
   {CV_ACCESSORY_DECODER_ADDRESS_LSB, DEFAULT_ACCESSORY_DECODER_ADDRESS & 0xFF},
@@ -280,8 +251,6 @@ CVPair FactoryDefaultCVs_4x4 [] =
   {CV_BASE_NUMBER + 39, 10},
 };
 
-*/
-
 //#endif
 
 /*
@@ -298,35 +267,4 @@ aspects
 */
 
 
-
-uint8_t FactoryDefaultCVIndex = 0;
-
-uint16_t BaseDecoderAddress;
-
-#ifdef LEARNING
-// for address learning mode
-int LEARNINGBUTTON = 0;    // pin 0
-#define LEDCONTROL LED_BUILTIN
-int learningMode = LOW;
-#endif
-
-uint16_t thisCommand = 0;
-
-#ifdef ENABLE_SERIAL
-// buffer to hold serial commands
-String readString;
-#endif
-
-Lights lLights;
-
-
-char* version;
-uint8_t versionBuffer[3];
-
-const byte MANUF_ID = MAN_ID_DIY;                          // Manufacturer ID in CV 8.
-
-#ifdef FORCE_RESET_FACTORY_DEFAULT_CV
-const byte FORCE_CVS = FORCE_RESET_FACTORY_DEFAULT_CV;
-#else
-const byte FORCE_CVS = 0;
 #endif

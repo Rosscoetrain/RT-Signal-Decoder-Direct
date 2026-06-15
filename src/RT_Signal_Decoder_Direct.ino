@@ -6,10 +6,12 @@
  */
 
 #include <NmraDcc.h>
+
 #include "version.h"
 #include "defines.h"
 #include "Lights.h"
 #include "variables.h"
+#include "default_CVS.h"
 #include "functions.h"
 #include "functions_dcc.h"
 
